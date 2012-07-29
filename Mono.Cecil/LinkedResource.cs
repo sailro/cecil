@@ -34,7 +34,9 @@ namespace Mono.Cecil {
 		string file;
 
 		public byte [] Hash {
-			get { return hash; }
+            get { return hash; }
+			// HACK - Reflexil - Setter
+            set { hash = value; }
 		}
 
 		public string File {

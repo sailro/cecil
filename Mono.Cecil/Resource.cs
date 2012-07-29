@@ -29,8 +29,9 @@
 namespace Mono.Cecil {
 
 	public enum ResourceType {
-		Linked,
-		Embedded,
+		// HACK - Reflexil - Embedded first, as it is the most used (cf. inject type combo)
+        Embedded,
+        Linked,
 		AssemblyLinked,
 	}
 

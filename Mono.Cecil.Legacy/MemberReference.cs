@@ -1,5 +1,5 @@
 //
-// ParameterReference.cs
+// MemberReference.cs
 //
 // Author:
 //   Jb Evain (jbevain@gmail.com)
@@ -26,51 +26,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-
 namespace Mono.Cecil {
 
-	// HACK - Reflexil - Partial for legacy classes
-	public abstract partial class ParameterReference : IMetadataTokenProvider {
+    public abstract partial class MemberReference : IReflectionVisitable
+    {
 
-		string name;
-		internal int index = -1;
-		protected TypeReference parameter_type;
-		internal MetadataToken token;
-
-		public string Name {
-			get { return name; }
-			set { name = value; }
-		}
-
-		public int Index {
-			get { return index; }
-		}
-
-		public TypeReference ParameterType {
-			get { return parameter_type; }
-			set { parameter_type = value; }
-		}
-
-		public MetadataToken MetadataToken {
-			get { return token; }
-			set { token = value; }
-		}
-
-		internal ParameterReference (string name, TypeReference parameterType)
+		public virtual void Accept (IReflectionVisitor visitor)
 		{
-			if (parameterType == null)
-				throw new ArgumentNullException ("parameterType");
-
-			this.name = name ?? string.Empty;
-			this.parameter_type = parameterType;
 		}
 
-		public override string ToString ()
-		{
-			return name;
-		}
-
-		public abstract ParameterDefinition Resolve ();
 	}
 }

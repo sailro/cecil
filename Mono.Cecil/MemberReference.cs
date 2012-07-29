@@ -28,7 +28,8 @@
 
 namespace Mono.Cecil {
 
-	public abstract class MemberReference : IMetadataTokenProvider {
+	// HACK - Reflexil - Partial for legacy classes
+	public abstract partial class MemberReference : IMetadataTokenProvider {
 
 		string name;
 		TypeReference declaring_type;

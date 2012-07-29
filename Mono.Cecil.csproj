@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">net_4_0_Debug</Configuration>
@@ -133,6 +133,26 @@
     <Compile Include="Mono.Cecil.Cil\Symbols.cs" />
     <Compile Include="Mono.Cecil.Cil\VariableDefinition.cs" />
     <Compile Include="Mono.Cecil.Cil\VariableReference.cs" />
+    <Compile Include="Mono.Cecil.Legacy\CustomAttribute.cs" />
+    <Compile Include="Mono.Cecil.Legacy\EventDefinition.cs" />
+    <Compile Include="Mono.Cecil.Legacy\FieldDefinition.cs" />
+    <Compile Include="Mono.Cecil.Legacy\GenericContext.cs" />
+    <Compile Include="Mono.Cecil.Legacy\ImageFormatException.cs" />
+    <Compile Include="Mono.Cecil.Legacy\IReflectionVisitable.cs" />
+    <Compile Include="Mono.Cecil.Legacy\IReflectionVisitor.cs" />
+    <Compile Include="Mono.Cecil.Legacy\MarshalInfo.cs" />
+    <Compile Include="Mono.Cecil.Legacy\MemberReference.cs" />
+    <Compile Include="Mono.Cecil.Legacy\MetadataFormatException.cs" />
+    <Compile Include="Mono.Cecil.Legacy\MethodDefinition.cs" />
+    <Compile Include="Mono.Cecil.Legacy\ModuleDefinition.cs" />
+    <Compile Include="Mono.Cecil.Legacy\ParameterDefinition.cs" />
+    <Compile Include="Mono.Cecil.Legacy\ParameterReference.cs" />
+    <Compile Include="Mono.Cecil.Legacy\PInvokeInfo.cs" />
+    <Compile Include="Mono.Cecil.Legacy\PropertyDefinition.cs" />
+    <Compile Include="Mono.Cecil.Legacy\ReflectionException.cs" />
+    <Compile Include="Mono.Cecil.Legacy\SecurityDeclaration.cs" />
+    <Compile Include="Mono.Cecil.Legacy\TypeDefinition.cs" />
+    <Compile Include="Mono.Cecil.Legacy\TypeReference.cs" />
     <Compile Include="Mono.Cecil.Metadata\BlobHeap.cs" />
     <Compile Include="Mono.Cecil.Metadata\Buffers.cs" />
     <Compile Include="Mono.Cecil.Metadata\CodedIndex.cs" />

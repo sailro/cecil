@@ -33,7 +33,8 @@ using RVA = System.UInt32;
 
 namespace Mono.Cecil {
 
-	public sealed class MethodDefinition : MethodReference, IMemberDefinition, ISecurityDeclarationProvider {
+	// HACK - Reflexil - Partial for legacy classes
+	public sealed partial class MethodDefinition : MethodReference, IMemberDefinition, ISecurityDeclarationProvider {
 
 		ushort attributes;
 		ushort impl_attributes;

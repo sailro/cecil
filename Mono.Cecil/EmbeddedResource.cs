@@ -37,7 +37,32 @@ namespace Mono.Cecil {
 
 		uint? offset;
 		byte [] data;
-		Stream stream;
+		// HACK - Reflexil - Alternate resource access
+	    private bool deferredloading = true;
+
+	    public byte[] Data
+	    {
+	        get
+	        {
+                if (deferredloading)
+                {
+                    if (offset.HasValue)
+                        data = reader.GetManagedResourceStream(offset.Value).ToArray();
+                    else
+                        throw new InvalidOperationException();
+
+                    deferredloading = false;
+                }
+
+	            return data;
+	        }
+            set {
+                deferredloading = false;
+                data = value;
+            }
+
+	    }
+		// HACK - Reflexil - Ends
 
 		public override ResourceType ResourceType {
 			get { return ResourceType.Embedded; }
@@ -46,13 +71,8 @@ namespace Mono.Cecil {
 		public EmbeddedResource (string name, ManifestResourceAttributes attributes, byte [] data) :
 			base (name, attributes)
 		{
-			this.data = data;
-		}
-
-		public EmbeddedResource (string name, ManifestResourceAttributes attributes, Stream stream) :
-			base (name, attributes)
-		{
-			this.stream = stream;
+			// HACK - Reflexil - Alternate resource access
+		    Data = data;
 		}
 
 		internal EmbeddedResource (string name, ManifestResourceAttributes attributes, uint offset, MetadataReader reader)
@@ -64,42 +84,16 @@ namespace Mono.Cecil {
 
 		public Stream GetResourceStream ()
 		{
-			if (stream != null)
-				return stream;
-
-			if (data != null)
-				return new MemoryStream (data);
-
-			if (offset.HasValue)
-				return reader.GetManagedResourceStream (offset.Value);
-
-			throw new InvalidOperationException ();
+			// HACK - Reflexil - Alternate resource access
+			return new MemoryStream (Data);
 		}
 
-		public byte [] GetResourceData ()
-		{
-			if (stream != null)
-				return ReadStream (stream);
+		// HACK - Reflexil - Alternate resource access
+        [Obsolete("GetResourceData method is now deprecated, please use Data property instead")]
+        public byte[] GetResourceData()
+        {
+            return Data;
+        }
 
-			if (data != null)
-				return data;
-
-			if (offset.HasValue)
-				return reader.GetManagedResourceStream (offset.Value).ToArray ();
-
-			throw new InvalidOperationException ();
-		}
-
-		static byte [] ReadStream (Stream stream)
-		{
-			var length = (int) stream.Length;
-			var data = new byte [length];
-			int offset = 0, read;
-
-			while ((read = stream.Read (data, offset, length - offset)) > 0)
-				offset += read;
-
-			return data;
-		}
 	}
 }

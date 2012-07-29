@@ -28,7 +28,8 @@
 
 namespace Mono.Cecil {
 
-	public sealed class PInvokeInfo {
+	// HACK - Reflexil - Partial for legacy classes
+	public sealed partial class PInvokeInfo {
 
 		ushort attributes;
 		string entry_point;

@@ -30,7 +30,8 @@ using Mono.Collections.Generic;
 
 namespace Mono.Cecil {
 
-	public sealed class FieldDefinition : FieldReference, IMemberDefinition, IConstantProvider, IMarshalInfoProvider {
+	// HACK - Reflexil - Partial for legacy classes
+	public sealed partial class FieldDefinition : FieldReference, IMemberDefinition, IConstantProvider, IMarshalInfoProvider {
 
 		ushort attributes;
 		Collection<CustomAttribute> custom_attributes;

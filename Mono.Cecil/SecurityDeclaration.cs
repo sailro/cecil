@@ -90,7 +90,8 @@ namespace Mono.Cecil {
 		}
 	}
 
-	public sealed class SecurityDeclaration {
+	// HACK - Reflexil - Partial for legacy classes
+	public sealed partial class SecurityDeclaration {
 
 		readonly internal uint signature;
 		byte [] blob;

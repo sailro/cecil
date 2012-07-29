@@ -34,15 +34,25 @@ namespace Mono.Cecil {
 
 	public struct CustomAttributeArgument {
 
-		readonly TypeReference type;
-		readonly object value;
+		// HACK - Reflexil - Private scope for setters
+		private TypeReference type;
+		private object value;
+		// HACK - Reflexil - Ends
 
 		public TypeReference Type {
 			get { return type; }
+			// HACK - Reflexil - Setter
+            set {
+                Mixin.CheckType(value);
+                type = value;
+            }
+			// HACK - Reflexil - Ends
 		}
 
 		public object Value {
 			get { return value; }
+			// HACK - Reflexil - Setter
+            set { this.value = value; }
 		}
 
 		public CustomAttributeArgument (TypeReference type, object value)
@@ -53,10 +63,12 @@ namespace Mono.Cecil {
 		}
 	}
 
-	public struct CustomAttributeNamedArgument {
+	// HACK - Reflexil - Partial for legacy classes
+	public partial struct CustomAttributeNamedArgument {
 
-		readonly string name;
-		readonly CustomAttributeArgument argument;
+        readonly string name;
+  		// HACK - Reflexil - Private scope for setter
+		private CustomAttributeArgument argument;
 
 		public string Name {
 			get { return name; }
@@ -64,6 +76,8 @@ namespace Mono.Cecil {
 
 		public CustomAttributeArgument Argument {
 			get { return argument; }
+			// HACK - Reflexil - Setter
+            set { argument = value; }
 		}
 
 		public CustomAttributeNamedArgument (string name, CustomAttributeArgument argument)
@@ -84,7 +98,8 @@ namespace Mono.Cecil {
 		Collection<CustomAttributeNamedArgument> Properties { get; }
 	}
 
-	public sealed class CustomAttribute : ICustomAttribute {
+	// HACK - Reflexil - Partial for legacy classes
+	public sealed partial class CustomAttribute : ICustomAttribute {
 
 		readonly internal uint signature;
 		internal bool resolved;

@@ -1016,7 +1016,8 @@ namespace Mono.Cecil {
 
 		uint AddEmbeddedResource (EmbeddedResource resource)
 		{
-			return resources.AddResource (resource.GetResourceData ());
+			// HACK - Reflexil - Alternate resources access
+			return resources.AddResource (resource.Data);
 		}
 
 		void AddExportedTypes ()
@@ -2271,6 +2272,10 @@ namespace Mono.Cecil {
 			}
 
 			if (type.etype == ElementType.Object) {
+				// HACK - Reflexil - Fix for malformed custom attribute argument
+                if (!(argument.Value is CustomAttributeArgument))
+                    argument = new CustomAttributeArgument(type, argument);
+				// HACK - Reflexil - Ends
 				argument = (CustomAttributeArgument) argument.Value;
 				type = argument.Type;
 

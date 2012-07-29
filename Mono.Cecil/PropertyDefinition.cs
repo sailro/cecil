@@ -32,7 +32,8 @@ using Mono.Collections.Generic;
 
 namespace Mono.Cecil {
 
-	public sealed class PropertyDefinition : PropertyReference, IMemberDefinition, IConstantProvider {
+	// HACK - Reflexil - Partial for legacy classes
+	public sealed partial class PropertyDefinition : PropertyReference, IMemberDefinition, IConstantProvider {
 
 		bool? has_this;
 		ushort attributes;

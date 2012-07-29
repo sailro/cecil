@@ -43,7 +43,8 @@ namespace Mono.Cecil {
 		Deferred = 2,
 	}
 
-	public sealed class ReaderParameters {
+	// HACK - Reflexil - Partial for legacy classes
+	public sealed partial class ReaderParameters {
 
 		ReadingMode reading_mode;
 		IAssemblyResolver assembly_resolver;
@@ -189,7 +190,8 @@ namespace Mono.Cecil {
 
 #endif
 
-	public sealed class ModuleDefinition : ModuleReference, ICustomAttributeProvider {
+	// HACK - Reflexil - Partial for legacy classes
+	public sealed partial class ModuleDefinition : ModuleReference, ICustomAttributeProvider {
 
 		internal Image Image;
 		internal MetadataSystem MetadataSystem;

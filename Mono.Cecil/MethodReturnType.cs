@@ -47,6 +47,8 @@ namespace Mono.Cecil {
 
 		internal ParameterDefinition Parameter {
 			get { return parameter ?? (parameter = new ParameterDefinition (return_type, method)); }
+			// HACK - Reflexil - Setter
+			set { parameter = value; }
 		}
 
 		public MetadataToken MetadataToken {
@@ -74,7 +76,13 @@ namespace Mono.Cecil {
 
 		public bool HasConstant {
 			get { return parameter != null && parameter.HasConstant; }
-			set { Parameter.HasConstant = value; }
+			// HACK - Reflexil - Setter
+            set {
+                parameter.HasConstant = value;
+                if (!value)
+                    parameter.Constant = Mixin.NoValue;
+            }
+			// HACK - Reflexil - Ends
 		}
 
 		public object Constant {

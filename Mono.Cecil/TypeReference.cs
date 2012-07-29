@@ -67,7 +67,8 @@ namespace Mono.Cecil {
 		Pinned = ElementType.Pinned,
 	}
 
-	public class TypeReference : MemberReference, IGenericParameterProvider, IGenericContext {
+	// HACK - Reflexil - Partial for legacy classes
+	public partial class TypeReference : MemberReference, IGenericParameterProvider, IGenericContext {
 
 		string @namespace;
 		bool value_type;

@@ -1,5 +1,5 @@
 //
-// ParameterReference.cs
+// PInvokeInfo.cs
 //
 // Author:
 //   Jb Evain (jbevain@gmail.com)
@@ -26,51 +26,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-
 namespace Mono.Cecil {
 
-	// HACK - Reflexil - Partial for legacy classes
-	public abstract partial class ParameterReference : IMetadataTokenProvider {
+	public sealed partial class PInvokeInfo : IReflectionVisitable {
 
-		string name;
-		internal int index = -1;
-		protected TypeReference parameter_type;
-		internal MetadataToken token;
-
-		public string Name {
-			get { return name; }
-			set { name = value; }
-		}
-
-		public int Index {
-			get { return index; }
-		}
-
-		public TypeReference ParameterType {
-			get { return parameter_type; }
-			set { parameter_type = value; }
-		}
-
-		public MetadataToken MetadataToken {
-			get { return token; }
-			set { token = value; }
-		}
-
-		internal ParameterReference (string name, TypeReference parameterType)
+		public void Accept (IReflectionVisitor visitor)
 		{
-			if (parameterType == null)
-				throw new ArgumentNullException ("parameterType");
-
-			this.name = name ?? string.Empty;
-			this.parameter_type = parameterType;
+			visitor.VisitPInvokeInfo (this);
 		}
-
-		public override string ToString ()
-		{
-			return name;
-		}
-
-		public abstract ParameterDefinition Resolve ();
 	}
 }

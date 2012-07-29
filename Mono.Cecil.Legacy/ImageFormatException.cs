@@ -1,5 +1,5 @@
 //
-// ParameterReference.cs
+// ImageFormatException.cs
 //
 // Author:
 //   Jb Evain (jbevain@gmail.com)
@@ -26,51 +26,28 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
+namespace Mono.Cecil.Binary {
 
-namespace Mono.Cecil {
+	using System;
 
-	// HACK - Reflexil - Partial for legacy classes
-	public abstract partial class ParameterReference : IMetadataTokenProvider {
+	public class ImageFormatException : Exception {
 
-		string name;
-		internal int index = -1;
-		protected TypeReference parameter_type;
-		internal MetadataToken token;
-
-		public string Name {
-			get { return name; }
-			set { name = value; }
-		}
-
-		public int Index {
-			get { return index; }
-		}
-
-		public TypeReference ParameterType {
-			get { return parameter_type; }
-			set { parameter_type = value; }
-		}
-
-		public MetadataToken MetadataToken {
-			get { return token; }
-			set { token = value; }
-		}
-
-		internal ParameterReference (string name, TypeReference parameterType)
+		internal ImageFormatException () : base()
 		{
-			if (parameterType == null)
-				throw new ArgumentNullException ("parameterType");
-
-			this.name = name ?? string.Empty;
-			this.parameter_type = parameterType;
 		}
 
-		public override string ToString ()
+		internal ImageFormatException (string message) : base(message)
 		{
-			return name;
 		}
 
-		public abstract ParameterDefinition Resolve ();
+		internal ImageFormatException (string message, params string[] parameters) :
+			base(string.Format(message, parameters))
+		{
+		}
+
+		internal ImageFormatException (string message, Exception inner) :
+			base(message, inner)
+		{
+		}
 	}
 }
