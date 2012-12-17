@@ -58,6 +58,8 @@ namespace Mono.Cecil.Cil {
 
 		public int CodeSize {
 			get { return code_size; }
+			// HACK - Reflexil - Setter
+            set { code_size = value; }
 		}
 
 		public bool InitLocals {
