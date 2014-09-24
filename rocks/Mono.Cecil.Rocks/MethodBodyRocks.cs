@@ -395,7 +395,7 @@ namespace Mono.Cecil.Rocks {
 			return true;
 		}
 
-		static void ComputeOffsets (MethodBody body)
+		public static void ComputeOffsets(this MethodBody body)
 		{
 			var offset = 0;
 			foreach (var instruction in body.Instructions) {
@@ -403,5 +403,6 @@ namespace Mono.Cecil.Rocks {
 				offset += instruction.GetSize ();
 			}
 		}
+
 	}
 }
