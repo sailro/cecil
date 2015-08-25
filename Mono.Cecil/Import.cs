@@ -47,39 +47,37 @@ namespace Mono.Cecil {
 
 	struct ImportGenericContext {
 
-		// HACK - Reflexil - Expose Stack as property
-		internal Collection<IGenericParameterProvider> Stack { get; set; }
+		Collection<IGenericParameterProvider> stack;
 
-		public bool IsEmpty { get { return Stack == null; } }
+		public bool IsEmpty { get { return stack == null; } }
 
-		// HACK - Reflexil - Expose Stack as property
-		public ImportGenericContext (IGenericParameterProvider provider) : this()
+		public ImportGenericContext (IGenericParameterProvider provider)
 		{
 			if (provider == null)
 				throw new ArgumentNullException ("provider");
 
-			Stack = null;
+			stack = null;
 
 			Push (provider);
 		}
 
 		public void Push (IGenericParameterProvider provider)
 		{
-			if (Stack == null)
-				Stack = new Collection<IGenericParameterProvider> (1) { provider };
+			if (stack == null)
+				stack = new Collection<IGenericParameterProvider> (1) { provider };
 			else
-				Stack.Add (provider);
+				stack.Add (provider);
 		}
 
 		public void Pop ()
 		{
-			Stack.RemoveAt (Stack.Count - 1);
+			stack.RemoveAt (stack.Count - 1);
 		}
 
 		public TypeReference MethodParameter (string method, int position)
 		{
-			for (int i = Stack.Count - 1; i >= 0; i--) {
-				var candidate = Stack [i] as MethodReference;
+			for (int i = stack.Count - 1; i >= 0; i--) {
+				var candidate = stack [i] as MethodReference;
 				if (candidate == null)
 					continue;
 
@@ -94,8 +92,8 @@ namespace Mono.Cecil {
 
 		public TypeReference TypeParameter (string type, int position)
 		{
-			for (int i = Stack.Count - 1; i >= 0; i--) {
-				var candidate = GenericTypeFor (Stack [i]);
+			for (int i = stack.Count - 1; i >= 0; i--) {
+				var candidate = GenericTypeFor (stack [i]);
 
 				if (candidate.FullName != type)
 					continue;
