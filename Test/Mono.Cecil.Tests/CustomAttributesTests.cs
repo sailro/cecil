@@ -33,7 +33,7 @@ namespace Mono.Cecil.Tests {
 
 				AssertArgument ("bar", attribute.ConstructorArguments [0]);
 			});
-        }
+		}
 
 		[Test]
 		public void NullString ()
@@ -402,15 +402,54 @@ namespace Mono.Cecil.Tests {
 		}
 
 		[Test]
-		public void EmptyBlob ()
+		public void TypeOfArrayOfNestedClass ()
 		{
-			TestIL ("types.il", module => {
-				var attribute = module.GetType ("CustomAttribute");
-				Assert.AreEqual (1, attribute.CustomAttributes.Count);
-				Assert.AreEqual (0, attribute.CustomAttributes [0].ConstructorArguments.Count);
+			TestCSharp ("CustomAttributes.cs", module => {
+				var parent = module.GetType ("Parent");
+				Assert.IsNotNull (parent);
+
+				var attribute = GetAttribute (parent, "Foo");
+				Assert.IsNotNull (attribute);
+
+				Assert.AreEqual (1, attribute.ConstructorArguments.Count);
+
+				var argument = attribute.ConstructorArguments [0];
+
+				Assert.AreEqual ("System.Type", argument.Type.FullName);
+
+				var type = argument.Value as TypeReference;
+				Assert.IsNotNull (type);
+
+				Assert.AreEqual ("Parent/Child[]", type.FullName);
 			});
 		}
 
+		[Test]
+		public void EmptyBlob ()
+		{
+			TestIL ("ca-empty-blob.il", module => {
+				var attribute = module.GetType ("CustomAttribute");
+				Assert.AreEqual (1, attribute.CustomAttributes.Count);
+				Assert.AreEqual (0, attribute.CustomAttributes [0].ConstructorArguments.Count);
+			}, verify: !Platform.OnMono);
+		}
+
+		[Test]
+		public void InterfaceImplementation ()
+		{
+			IgnoreOnMono();
+
+			TestIL ("ca-iface-impl.il", module => {
+				var type = module.GetType ("FooType");
+				var iface = type.Interfaces.Single (i => i.InterfaceType.FullName == "IFoo");
+				Assert.IsTrue (iface.HasCustomAttributes);
+				var attributes = iface.CustomAttributes;
+				Assert.AreEqual (1, attributes.Count);
+				Assert.AreEqual ("FooAttribute", attributes [0].AttributeType.FullName);
+			});
+		}
+
+#if !READ_ONLY
 		[Test]
 		public void DefineCustomAttributeFromBlob ()
 		{
@@ -445,8 +484,10 @@ namespace Mono.Cecil.Tests {
 
 			Assert.IsNotNull (attribute);
 			Assert.AreEqual ("CaBlob", (string) attribute.ConstructorArguments [0].Value);
-		}
 
+			module.Dispose ();
+		}
+#endif
 		static void AssertCustomAttribute (string expected, CustomAttribute attribute)
 		{
 			Assert.AreEqual (expected, PrettyPrint (attribute));

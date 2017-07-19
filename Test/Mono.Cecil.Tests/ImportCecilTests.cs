@@ -1,3 +1,4 @@
+#if !READ_ONLY
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -214,11 +215,11 @@ namespace Mono.Cecil.Tests {
 		public void ImportMethodOnOpenGeneric ()
 		{
 			var generic = typeof (Generic<>).ToDefinition ();
-			var module = ModuleDefinition.CreateModule ("foo", ModuleKind.Dll);
 
-			var method = module.ImportReference (generic.GetMethod ("Method"));
-
-			Assert.AreEqual ("T Mono.Cecil.Tests.ImportCecilTests/Generic`1::Method(T)", method.FullName);
+			using (var module = ModuleDefinition.CreateModule ("foo", ModuleKind.Dll)) {
+				var method = module.ImportReference (generic.GetMethod ("Method"));
+				Assert.AreEqual ("T Mono.Cecil.Tests.ImportCecilTests/Generic`1::Method(T)", method.FullName);
+			}
 		}
 
 		public class ContextGeneric1Method2<G1>
@@ -372,3 +373,4 @@ namespace Mono.Cecil.Tests {
 		}
 	}
 }
+#endif

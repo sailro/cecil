@@ -1,4 +1,4 @@
-
+#if !READ_ONLY
 using Mono.Cecil.Mdb;
 
 using NUnit.Framework;
@@ -17,7 +17,7 @@ namespace Mono.Cecil.Tests {
 
 				AssertCode (@"
 	.locals init (System.Int32 i)
-	.line 7,-1:-1,-1 'C:\sources\cecil\symbols\Mono.Cecil.Mdb\Test\Resources\assemblies\hello.cs'
+	.line 6,-1:-1,-1 'C:\sources\cecil\symbols\Mono.Cecil.Mdb\Test\Resources\assemblies\hello.cs'
 	IL_0000: ldc.i4.0
 	IL_0001: stloc.0
 	.line 7,-1:-1,-1 'C:\sources\cecil\symbols\Mono.Cecil.Mdb\Test\Resources\assemblies\hello.cs'
@@ -44,17 +44,43 @@ namespace Mono.Cecil.Tests {
 			}, symbolReaderProvider: typeof(MdbReaderProvider), symbolWriterProvider: typeof(MdbWriterProvider));
 		}
 
-		static void AssertCode (string expected, MethodDefinition method)
+		[Test]
+		public void RoundTripCoreLib ()
 		{
-			Assert.IsTrue (method.HasBody);
-			Assert.IsNotNull (method.Body);
+			TestModule ("mscorlib.dll", module => {
+				var type = module.GetType ("System.IO.__Error");
+				var method = type.GetMethod ("WinIOError");
 
-			Assert.AreEqual (Normalize (expected), Normalize (Formatter.FormatMethodBody (method)));
+				Assert.IsNotNull (method.Body);
+			}, verify: !Platform.OnMono, symbolReaderProvider: typeof(MdbReaderProvider), symbolWriterProvider: typeof(MdbWriterProvider));
 		}
 
-		static string Normalize (string str)
+		[Test]
+		public void PartialClass ()
 		{
-			return str.Trim ().Replace ("\r\n", "\n");
+			TestModule ("BreakpointTest.Portable.dll", module => {
+				var type = module.GetType ("BreakpointTest.Portable.TestService/<MyAsyncAction1>c__async3");
+				var method = type.GetMethod ("MoveNext");
+
+				Assert.IsNotNull (method);
+
+				var info = method.DebugInformation;
+				Assert.AreEqual (5, info.SequencePoints.Count);
+				foreach (var sp in info.SequencePoints)
+					Assert.AreEqual(@"C:\tmp\repropartial\BreakpointTest.Portable\TestService.Actions.cs", sp.Document.Url);
+
+				type = module.GetType("BreakpointTest.Portable.TestService/<MyAsyncAction2>c__async2");
+				method = type.GetMethod("MoveNext");
+
+				Assert.IsNotNull(method);
+
+				info = method.DebugInformation;
+				Assert.AreEqual(5, info.SequencePoints.Count);
+				foreach (var sp in info.SequencePoints)
+					Assert.AreEqual(@"C:\tmp\repropartial\BreakpointTest.Portable\TestService.cs", sp.Document.Url);
+
+			}, symbolReaderProvider: typeof(MdbReaderProvider), symbolWriterProvider: typeof(MdbWriterProvider));
 		}
 	}
 }
+#endif

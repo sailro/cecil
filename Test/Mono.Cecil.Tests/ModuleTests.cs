@@ -12,6 +12,7 @@ namespace Mono.Cecil.Tests {
 	[TestFixture]
 	public class ModuleTests : BaseTestFixture {
 
+#if !READ_ONLY
 		[Test]
 		public void CreateModuleEscapesAssemblyName ()
 		{
@@ -21,6 +22,7 @@ namespace Mono.Cecil.Tests {
 			module = ModuleDefinition.CreateModule ("Test.exe", ModuleKind.Console);
 			Assert.AreEqual ("Test", module.Assembly.Name.Name);
 		}
+#endif
 
 		[Test]
 		public void SingleModule ()
@@ -208,7 +210,7 @@ namespace Mono.Cecil.Tests {
 		public void Win32FileVersion ()
 		{
 			TestModule ("libhello.dll", module => {
-				var version = FileVersionInfo.GetVersionInfo (module.FullyQualifiedName);
+				var version = FileVersionInfo.GetVersionInfo (module.FileName);
 
 				Assert.AreEqual ("0.0.0.0", version.FileVersion);
 			});
@@ -225,10 +227,10 @@ namespace Mono.Cecil.Tests {
 		[Test]
 		public void MixedModeModule ()
 		{
-			var module = GetResourceModule ("cppcli.dll");
-
-			Assert.AreEqual (1, module.ModuleReferences.Count);
-			Assert.AreEqual (string.Empty, module.ModuleReferences [0].Name);
+			using (var module = GetResourceModule ("cppcli.dll")) {
+				Assert.AreEqual (1, module.ModuleReferences.Count);
+				Assert.AreEqual (string.Empty, module.ModuleReferences [0].Name);
+			}
 		}
 
 		[Test]
@@ -239,40 +241,77 @@ namespace Mono.Cecil.Tests {
 		}
 
 		[Test]
-		public void WriteModuleTwice ()
-		{
-			var module = GetResourceModule ("iterator.exe");
-
-			var path = Path.Combine (Path.GetTempPath (), "cecil");
-			var file = Path.Combine (path, "iteratorrt.exe");
-
-			module.Write (file);
-			module.Write (file);
-		}
-
-		[Test]
 		public void GetTypeNamespacePlusName ()
 		{
-			var module = GetResourceModule ("moda.netmodule");
-
-			var type = module.GetType ("Module.A", "Foo");
-			Assert.IsNotNull (type);
+			using (var module = GetResourceModule ("moda.netmodule")) {
+				var type = module.GetType ("Module.A", "Foo");
+				Assert.IsNotNull (type);
+			}
 		}
 
 		[Test]
 		public void OpenModuleImmediate ()
 		{
-			var module = GetResourceModule ("hello.exe", ReadingMode.Immediate);
-
-			Assert.AreEqual (ReadingMode.Immediate, module.ReadingMode);
+			using (var module = GetResourceModule ("hello.exe", ReadingMode.Immediate)) {
+				Assert.AreEqual (ReadingMode.Immediate, module.ReadingMode);
+			}
 		}
 
 		[Test]
 		public void OpenModuleDeferred ()
 		{
-			var module = GetResourceModule ("hello.exe", ReadingMode.Deferred);
-
-			Assert.AreEqual (ReadingMode.Deferred, module.ReadingMode);
+			using (var module = GetResourceModule ("hello.exe", ReadingMode.Deferred)) {
+				Assert.AreEqual (ReadingMode.Deferred, module.ReadingMode);
+			}
 		}
+
+		[Test]
+		public void OwnedStreamModuleFileName ()
+		{
+			var path = GetAssemblyResourcePath ("hello.exe", GetType ().Assembly);
+			using (var file = File.Open (path, FileMode.Open))
+			{
+				using (var module = ModuleDefinition.ReadModule (file))
+				{
+					Assert.IsNotNullOrEmpty (module.FileName);
+					Assert.AreEqual (path, module.FileName);
+				}
+			}
+		}
+
+#if !READ_ONLY
+		[Test]
+		public void ReadAndWriteFile ()
+		{
+			var path = Path.GetTempFileName ();
+
+			var original = ModuleDefinition.CreateModule ("FooFoo", ModuleKind.Dll);
+			var type = new TypeDefinition ("Foo", "Foo", TypeAttributes.Abstract | TypeAttributes.Sealed);
+			original.Types.Add (type);
+			original.Write (path);
+
+			using (var module = ModuleDefinition.ReadModule (path, new ReaderParameters { ReadWrite = true })) {
+				module.Write ();
+			}
+
+			using (var module = ModuleDefinition.ReadModule (path))
+				Assert.AreEqual ("Foo.Foo", module.Types [1].FullName);
+		}
+
+		[Test]
+		public void ExceptionInWriteDoesNotKeepLockOnFile ()
+		{
+			var path = Path.GetTempFileName ();
+
+			var module = ModuleDefinition.CreateModule ("FooFoo", ModuleKind.Dll);
+			// Mixed mode module that Cecil can not write
+			module.Attributes = (ModuleAttributes) 0;
+
+			Assert.Throws<NotSupportedException>(() => module.Write (path));
+
+			// Ensure you can still delete the file
+			File.Delete (path);
+		}
+#endif
 	}
 }
