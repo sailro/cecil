@@ -23,7 +23,8 @@ using System.Runtime.InteropServices;
 [assembly: InternalsVisibleTo ("Mono.Cecil.Rocks, PublicKey=" + Consts.PublicKey)]
 [assembly: InternalsVisibleTo ("Mono.Cecil.Tests, PublicKey=" + Consts.PublicKey)]
 // HACK - Reflexil - Access to internals
-[assembly: InternalsVisibleTo("Reflexil, PublicKey=" + Consts.PublicKey))]
-[assembly: InternalsVisibleTo("Reflexil.Reflector, PublicKey=" + Consts.PublicKey))]
-[assembly: InternalsVisibleTo("Reflexil.CecilStudio, " + Consts.PublicKey))]
-[assembly: InternalsVisibleTo("Reflexil.ILSpy.Plugin, " + Consts.PublicKey))]
+[assembly: InternalsVisibleTo("Reflexil, PublicKey=" + Consts.PublicKey)]
+[assembly: InternalsVisibleTo("Reflexil.Reflector, PublicKey=" + Consts.PublicKey)]
+[assembly: InternalsVisibleTo("Reflexil.CecilStudio, PublicKey= " + Consts.PublicKey)]
+[assembly: InternalsVisibleTo("Reflexil.ILSpy.Plugin, PublicKey= " + Consts.PublicKey)]
+[assembly: InternalsVisibleTo("Reflexil.JustDecompile.Module, PublicKey= " + Consts.PublicKey)]

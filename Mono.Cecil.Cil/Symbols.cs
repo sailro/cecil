@@ -828,7 +828,7 @@ namespace Mono.Cecil.Cil {
 
 			var name = new SR.AssemblyName {
 				// HACK - Reflexil - load our custom assembly
-				Name = "Mono.Cecil." + symbol_kind + ".Reflexil",
+				Name = "Mono.Cecil." + suffix + ".Reflexil",
 				Version = cecil_name.Version,
 			};
 
